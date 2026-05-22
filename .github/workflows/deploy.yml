@@ -1,0 +1,25 @@
+name: Déploiement Continu vers VPS InnovaByte
+
+on:
+  push:
+    branches:
+      - main # Déclenche le déploiement uniquement lors d'un "push" sur la branche principale
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Déploiement via SSH sur le serveur de production
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22
+          script: |
+            echo "🚀 Début du déploiement automatisé InnovaByte..."
+            cd /var/www/html
+            sudo git fetch
+            sudo git reset --hard origin/main
+            sudo chown -R www-data:www-data /var/www/html
+            echo "✅ Déploiement terminé avec succès !"
